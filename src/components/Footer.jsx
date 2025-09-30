@@ -14,9 +14,7 @@ const Footer = () => {
         {/* Brand Info */}
         <div>
           <h2 className="text-2xl font-bold text-red-500 mb-4">eShop</h2>
-          <p className="mb-4">
-            Powering Your World with the Best Products.
-          </p>
+          <p className="mb-4">Powering Your World with the Best Products.</p>
           <p>CBD, Nairobi City, kenya</p>
           <p>Email: customersupport@eShop.com</p>
           <p>Phone: (+254) 717-677-853</p>
@@ -103,7 +101,7 @@ const Footer = () => {
             />
             <button
               type="submit"
-              className="bg-red-600 px-4 py-2 rounded-r-lg hover:bg-red-700 transition text-white"
+              className="bg-red-600 px-4 rounded-r-md hover:bg-red-700 transition text-white"
             >
               Subscribe
             </button>
@@ -112,9 +110,12 @@ const Footer = () => {
       </div>
 
       {/* Bottom Bar */}
+
       <div className="mt-8 border-t border-gray-700 pt-6 text-center text-sm">
-        <p>&copy: {new Date().getFullYear()} <span className="text-red-500">eShop</span>. All
-        rights reserved</p>
+        <p>
+          © {new Date().getFullYear()}{" "}
+          <span className="text-red-500">eShop</span>. All rights reserved
+        </p>
       </div>
     </footer>
   );
