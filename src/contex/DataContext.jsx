@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import axios from "axios";
 
 export const DataContext = createContext(null);
@@ -17,9 +17,11 @@ export const DataProvider = ({ children }) => {
         console.error('Error fetching products:', error)
     }
   };
-  return (
-    <DataContext.Provider value={{ data, setData, fetchAllProducts }}>
+  return <DataContext.Provider value={{ data, setData, fetchAllProducts }}>
       {children}
     </DataContext.Provider>
-  );
-};
+}
+
+export const getData = () => useContext(DataContext)
+
+
