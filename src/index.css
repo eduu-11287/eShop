@@ -1,15 +1,25 @@
 @import "tailwindcss" ;
 
 
-/* user button */
+/*User Avtar box*/
+
 
 .cl-avatarBox{
     width: 3rem;
     height: 3rem;
 }
 
+/* carosel arrows */
 .arrows{
     height: 40px;
     width: 40px;
     margin: 1px;
+}
+
+/* input colors*/
+input {
+    background-color: #ffffff;
+    accent-color: red;
+    border: 1px solid #ccc;
+    color: #333;
 }

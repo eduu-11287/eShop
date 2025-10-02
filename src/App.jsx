@@ -24,9 +24,7 @@ const App = () => {
         const location = await axios.get(url)
         const exactLocation = location.data.address
         setLocation(exactLocation)
-        setOpenDropdown(false)
-        console.log(exactLocation);
-        
+        setOpenDropdown(false)        
       } catch (error) {
         console.log(error);
       }

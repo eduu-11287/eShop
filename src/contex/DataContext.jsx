@@ -11,7 +11,6 @@ export const DataProvider = ({ children }) => {
     try {
       const response = await axios.get("https://fakestoreapi.com/products");
       setData(response.data);
-      console.log("Products fetched:", response.data);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
@@ -32,7 +31,12 @@ export const DataProvider = ({ children }) => {
 
   return (
     <DataContext.Provider
-      value={{ data, setData, fetchAllProducts, categoryOnlyData }}
+      value={{
+        data,
+        setData,
+        fetchAllProducts,
+        categoryOnlyData
+      }}
     >
       {children}
     </DataContext.Provider>
