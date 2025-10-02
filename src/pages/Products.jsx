@@ -4,6 +4,8 @@ import FilterSection from "../components/FilterSection";
 import Loading from "../assets/loading.webm";
 import ProductCard from "../components/ProductCard";
 import Pagination from "../components/Pagination";
+import Lottie from "lottie-react";
+import notfound from "../assets/notfound.json"
 
 const Products = () => {
   const { data, fetchAllProducts } = getData();
@@ -64,7 +66,9 @@ const Products = () => {
                   />
                 </div>
               ) : (
-                <div></div>
+                <div className="flex justify-center items-center md:h-[600px] md:w-[900px] mt-10">
+                  <Lottie animationData={notfound} classID="w-[500px]" />
+                </div>
               )}
             </div>
           </>
