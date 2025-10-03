@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import Products from './pages/Products'
+import ProductDetail from './pages/Products';
 import Contact from './pages/Contact'
 import About from './pages/About'
 import Cart from './pages/Cart'

@@ -4,10 +4,12 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import Category from "./Category";
+import { useNavigate } from 'react-router-dom';
 import { AiOutlineArrowLeft, AiOutlineArrowRight } from "react-icons/ai";
 
 const Carousel = () => {
   const { data, fetchAllProducts } = getData();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!data || data.length === 0) {
@@ -23,6 +25,10 @@ const Carousel = () => {
       </div>
     );
   }
+
+const HandleShopNow = () => {
+  navigate('/products'); 
+}
 
   // Custom arrows
   const SamplePrevArrow = ({ onClick }) => (
@@ -78,8 +84,10 @@ const Carousel = () => {
                 <p className="md:w-[500px] line-clamp-3 text-gray-400">
                   {item.description}
                 </p>
-                <button className="bg-gradient-to-r from-red-500 to-purple-500 text-white px-3 py-2 rounded-md mt-2 hover:scale-105 transition-transform duration-200">
-                  Shop Now
+                <button 
+                  onClick={HandleShopNow}
+                  className="bg-gradient-to-r from-red-500 to-purple-500 text-white px-3 py-2 rounded-md mt-2 hover:scale-105 transition-transform duration-200">
+                    Shop Now
                 </button>
               </div>
 
