@@ -1,5 +1,5 @@
 import React from "react";
-import { getData } from "../contex/DataContext";
+import { getData } from "../context/DataContext";
 
 const FilterSection = ({
   search,

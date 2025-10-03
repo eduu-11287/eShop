@@ -1,7 +1,7 @@
 // src/pages/About.jsx
 import React, { useCallback } from "react";
 import { Link } from "react-router-dom";
-import { getData } from "../contex/DataContext";
+import { getData } from "../context/DataContext";
 
 const About = () => {
   // Access fetch function from context to prefetch products

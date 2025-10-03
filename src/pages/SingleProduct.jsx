@@ -63,6 +63,7 @@ const SingleProduct = () => {
                 <input
                   type="number"
                   min={1}
+                  value={1}
                   className="w-20 border border-gray-300 rounded-lg px-3 py-1 focus:outline-none focus:ring-2 focus:ring-red-500"
                 />
               </div>

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { getData } from "../contex/DataContext";
+import { getData } from "../context/DataContext";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
