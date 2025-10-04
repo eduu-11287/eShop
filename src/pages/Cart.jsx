@@ -1,9 +1,14 @@
 import React from "react";
 import { useCart } from "../context/CartContext";
 import { FaRegTrashAlt } from "react-icons/fa";
+import { LucideNotebookText } from "lucide-react";
+import { MdDeliveryDining } from "react-icons/md";
+import { GiShoppingBag } from "react-icons/gi";
 
-const Cart = () => {
-  const { cartItem } = useCart();
+const Cart = ({ location, getLocation }) => {
+  const { cartItem, updateQuantity, deleteItem } = useCart();
+
+  const totalPrice = cartItem.reduce((total, items) => total + (items.price * items.quantity), 0);
 
   if (!cartItem) {
     return <div className="mt-10 max-w-6xl mx-auto mb-5">Loading...</div>;
@@ -35,11 +40,11 @@ const Cart = () => {
                     </div>
                   </div>
                   <div className="bg-red-500 text-white flex gap-4 p-2 rounded-md font-bold text-xl">
-                    <button className="cursor-pointer">-</button>
-                    <span>1</span>
-                    <button className="cursor-pointer">+</button>
+                    <button onClick={()=>updateQuantity( cartItem, item.id, "decrease")} className="cursor-pointer">-</button>
+                    <span>{item.quantity}</span>
+                    <button onClick={()=>updateQuantity( cartItem, item.id, "increase")} className="cursor-pointer">+</button>
                   </div>
-                  <span className="hover:bg-white/60 transition-all rounded-full p-3 hoover:shadow-2xl">
+                  <span onClick={()=>deleteItem(item.id)} className="hover:bg-white/60 transition-all rounded-full p-3 hoover:shadow-2xl">
                     <FaRegTrashAlt className=" text-red-500 text-2xl cursor-pointer" />
                   </span>
                 </div>
@@ -65,6 +70,7 @@ const Cart = () => {
                   placeholder="Enter your address"
                   required
                   className="p-2 rounded-md"
+                  value={location?.country}
                 />
               </div>
               <div className="flex w-full gap-5">
@@ -75,6 +81,7 @@ const Cart = () => {
                     placeholder="Enter your state"
                     required
                     className="p-2 rounded-md w-full"
+                    value={location?.state}
                   />
                 </div>
                 <div className="flex flex-col space-y-1 w-full">
@@ -84,6 +91,7 @@ const Cart = () => {
                     placeholder="Enter your postcode"
                     required
                     className="p-2 rounded-md w-full"
+                    value={location?.postcode}
                   />
                 </div>
               </div>
@@ -95,6 +103,7 @@ const Cart = () => {
                     placeholder="Enter your country"
                     required
                     className="p-2 rounded-md w-full"
+                    value={location?.country}
                   />
                 </div>
                 <div className="flex flex-col space-y-1 w-full">
@@ -114,10 +123,66 @@ const Cart = () => {
                 ----------OR----------
               </div>
               <div className="flex justify-center">
-                <button className="bg-red-500 text-white px-2 rounded-md">
+                <button onClick={getLocation} className="bg-red-500 text-white px-2 rounded-md">
                   Delete Location
                 </button>
               </div>
+            </div>
+            <div className="bg-white border border-gray-100 shadow-xl rounded-md p-7 mt-4 space-y-2 h-max">
+              <h1 className="text-gray-500 font-bold text-xl">Bill details</h1>
+              <div className="flex justify-between items-center">
+                <h1 className="flex gap-1 items-center text-gray-700">
+                  <span>
+                    <LucideNotebookText />
+                  </span>
+                  Items total
+                </h1>
+                <p>Ksh {totalPrice}</p>
+              </div>
+              <div className="flex justify-between items-center">
+                <h1 className="flex gap-1 items-center text-gray-700">
+                  <span>
+                    <MdDeliveryDining />
+                  </span>
+                  Delivery Charges
+                </h1>
+                <p className="text-red-500 font-semibold">
+                  <span className="text-gray-600 line-through">Ksh200</span>{" "}
+                  FREE
+                </p>
+              </div>
+              <div className="flex justify-between items-center">
+                <h1 className="flex gap-1 items-center text-gray-700">
+                  <span>
+                    <GiShoppingBag />
+                  </span>
+                  Handling Charges
+                </h1>
+                <p className="text-red-500 font-semibold">Ksh50</p>
+              </div>
+              <hr className="text-gray-200 mt-2" />
+              <div className="flex justify-between items-center">
+                <h1 className="font-semibold text-lg">Grand total</h1>
+                <p className="font-semibold text-lg">Ksh {totalPrice + 50}</p>
+              </div>
+              <div>
+                <h1 className="font-semibold text-gray-700 mb-3 mt-7">
+                  Apply Promo Code{" "}
+                </h1>
+                <div className="flex gap-5">
+                  <input
+                    type="text"
+                    placeholder="Enter code"
+                    className="p-2 rounded-md w-full"
+                  />
+                  <button className="bg-white text-black border border-gray-200 px-4 cursor-pointer py-1 rounded-md">
+                    Apply
+                  </button>
+                </div>
+              </div>
+              <button className="bg-red-500 text-white px-3 py-2 rounded-md w-full cursor-pointer mt-3">
+                Proceed to Checkout
+              </button>
             </div>
           </div>
         </div>
