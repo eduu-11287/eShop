@@ -1,12 +1,53 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   FaFacebookF,
   FaInstagram,
   FaTwitter,
   FaPinterestP,
 } from "react-icons/fa";
+import emailjs from "@emailjs/browser";
+import { toast } from "react-toastify";
 
 const Footer = () => {
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email.trim()) return toast.error("Please enter your email");
+    if (!emailRegex.test(email)) return toast.error("Please enter a valid email address");
+
+    setLoading(true);
+
+    try {
+      // ✅ Match EmailJS template variable names EXACTLY as set in your template
+      const templateParams = {
+        from_name: "Newsletter Subscriber",
+        reply_to: email,
+        user_email: email,
+        message: `New subscriber: ${email}`,
+      };
+
+      // ✅ Ensure .env variables are prefixed correctly and available
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        templateParams,
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      );
+
+      toast.success("You're subscribed! 🎉 Check your inbox for confirmation.");
+      setEmail("");
+    } catch (error) {
+      console.error("Subscription error:", error);
+      toast.error("Subscription failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <footer className="bg-[#0b1120] text-gray-300">
       {/* Top Section */}
@@ -30,31 +71,15 @@ const Footer = () => {
             Customer Service
           </h3>
           <ul className="space-y-2 text-sm sm:text-base">
-            <li>
-              <a href="#" className="hover:text-red-500 transition">
-                Contact Us
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-red-500 transition">
-                Shipping & Returns
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-red-500 transition">
-                FAQs
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-red-500 transition">
-                Order Tracking
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-red-500 transition">
-                Size Guide
-              </a>
-            </li>
+            {["Contact Us", "Shipping & Returns", "FAQs", "Order Tracking", "Size Guide"].map(
+              (item) => (
+                <li key={item}>
+                  <a href="#" className="hover:text-red-500 transition">
+                    {item}
+                  </a>
+                </li>
+              )
+            )}
           </ul>
         </div>
 
@@ -64,34 +89,15 @@ const Footer = () => {
             Follow Us
           </h3>
           <div className="flex space-x-3 sm:space-x-4">
-            <a
-              href="#"
-              className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-gray-800 hover:bg-red-500 transition text-sm sm:text-base"
-              aria-label="Facebook"
-            >
-              <FaFacebookF />
-            </a>
-            <a
-              href="#"
-              className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-gray-800 hover:bg-red-500 transition text-sm sm:text-base"
-              aria-label="Instagram"
-            >
-              <FaInstagram />
-            </a>
-            <a
-              href="#"
-              className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-gray-800 hover:bg-red-500 transition text-sm sm:text-base"
-              aria-label="Twitter"
-            >
-              <FaTwitter />
-            </a>
-            <a
-              href="#"
-              className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-gray-800 hover:bg-red-500 transition text-sm sm:text-base"
-              aria-label="Pinterest"
-            >
-              <FaPinterestP />
-            </a>
+            {[FaFacebookF, FaInstagram, FaTwitter, FaPinterestP].map((Icon, i) => (
+              <a
+                key={i}
+                href="#"
+                className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-gray-800 hover:bg-red-500 transition text-sm sm:text-base"
+              >
+                <Icon />
+              </a>
+            ))}
           </div>
         </div>
 
@@ -103,17 +109,24 @@ const Footer = () => {
           <p className="mb-3 sm:mb-4 text-sm sm:text-base">
             Subscribe to get special offers, free giveaways, and more.
           </p>
-          <form className="flex flex-col sm:flex-row gap-2 sm:gap-0">
+          <form
+            onSubmit={handleSubscribe}
+            className="flex flex-col sm:flex-row gap-2 sm:gap-0"
+          >
             <input
               type="email"
               placeholder="Your email address"
-              className="flex-1 px-3 py-2 text-sm sm:text-base rounded-lg sm:rounded-l-lg sm:rounded-r-none bg-gray-800 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={loading}
+              className="flex-1 px-3 py-2 text-sm sm:text-base rounded-lg sm:rounded-l-lg sm:rounded-r-none bg-gray-800 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:opacity-50"
             />
             <button
               type="submit"
-              className="bg-red-600 px-4 py-2 text-sm sm:text-base rounded-lg sm:rounded-l-none sm:rounded-r-lg hover:bg-red-700 transition text-white font-medium"
+              disabled={loading}
+              className="bg-red-600 px-4 py-2 text-sm sm:text-base rounded-lg sm:rounded-l-none sm:rounded-r-lg hover:bg-red-700 transition text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Subscribe
+              {loading ? "Subscribing..." : "Subscribe"}
             </button>
           </form>
         </div>
