@@ -12,6 +12,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""), 
       },
+
+      "/api/sendEmail": {
+        target: "http://localhost:3000", // Vercel dev server
+        changeOrigin: true,
+      },
     },
   },
 })

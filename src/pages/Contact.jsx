@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { MapPin, Mail, Phone } from "lucide-react";
-import toast, { Toaster } from "react-hot-toast";
-import emailjs from "@emailjs/browser";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -11,6 +9,12 @@ const Contact = () => {
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState({ show: false, type: "", message: "" });
+
+  const showToast = (type, message) => {
+    setToast({ show: true, type, message });
+    setTimeout(() => setToast({ show: false, type: "", message: "" }), 3500);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,60 +40,42 @@ const Contact = () => {
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      toast.error("⚠️ Please fix the highlighted errors", {
-        style: { background: "#1f2937", color: "#fff", borderRadius: "12px" }
-      });
+      showToast("error", "⚠️ Please fix the highlighted errors");
       return;
     }
 
     setLoading(true);
 
     try {
-      // Format email content as HTML
-     /* const formattedMessage = `
-        <div style="font-family: 'Segoe UI', sans-serif; color: #222;">
-          <h2 style="color: #E63946;">📩 New Contact Message</h2>
-          <p><strong>Name:</strong> ${formData.name}</p>
-          <p><strong>Email:</strong> ${formData.email}</p>
-          <p><strong>Message:</strong></p>
-          <p style="background-color:#f8f9fa; padding:12px; border-left:4px solid #E63946; font-style:italic;">
-            ${formData.message}
-          </p>
-          <hr style="border:none; border-top:1px solid #ddd; margin:20px 0;" />
-          <p style="font-size:0.9rem; color:#555;">
-            Sent from the <strong>eShop Contact Form</strong><br/>
-            <a href="https://eshop.example.com" style="color:#E63946; text-decoration:none;">Visit eShop</a>
-          </p>
-        </div>
-      `; */
-
-      const templateParams = {
-        from_name: formData.name,
-        from_email: formData.email,
-        to_email: "bumble.11287@gmail.com",
-        message_html: formData.message,
-
-      };
-
-      await emailjs.send(
-        import.meta.env.VITE_EMAILJS_SERVICE_ID,
-        import.meta.env.VITE_EMAILJS_CONTACT_TEMPLATE_ID,
-        templateParams,
-        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
-      );
-
-      toast.success("Message sent successfully 🚀", {
-        style: { background: "#1f2937", color: "#fff", borderRadius: "12px" },
-        icon: "📩"
+      // Use relative path for both dev and production
+      const response = await fetch("/api/sendEmail", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
       });
 
+      let data;
+      try {
+        data = await response.json();
+      } catch (parseError) {
+        console.error("Failed to parse response:", parseError);
+        throw new Error("Server returned invalid response");
+      }
+
+      console.log("Response status:", response.status);
+      console.log("Response data:", data);
+
+      if (!response.ok) {
+        throw new Error(data.error || data.message || "Failed to send message");
+      }
+
+      showToast("success", "📩 Message sent successfully 🚀");
       setFormData({ name: "", email: "", message: "" });
       setErrors({});
     } catch (error) {
       console.error("Email send error:", error);
-      toast.error("❌ Failed to send message. Try again.", {
-        style: { background: "#1f2937", color: "#fff", borderRadius: "12px" }
-      });
+      console.error("Error details:", error.message);
+      showToast("error", `❌ ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -97,7 +83,13 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-[#0f0c29] via-[#302b63] to-[#24243e] flex items-center justify-center px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
-      <Toaster position="top-center" reverseOrder={false} />
+      {toast.show && (
+        <div className={`fixed top-6 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-xl shadow-2xl transition-all duration-300 ${
+          toast.type === "success" ? "bg-[#1f2937]" : "bg-[#1f2937]"
+        } text-white font-medium border border-white/20`}>
+          {toast.message}
+        </div>
+      )}
 
       <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-xl sm:rounded-2xl shadow-2xl p-6 sm:p-8 md:p-10 w-full max-w-5xl">
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white text-center mb-6 sm:mb-8 md:mb-10">
