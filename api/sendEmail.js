@@ -65,7 +65,7 @@ export default async function handler(req, res) {
 
     // Send email via Resend
     const data = await resend.emails.send({
-      from: 'eShop Contact <onboarding@resend.dev>',
+      from: 'eShop Contact <eShopsupport@gmail.com>',
       to: 'bumble.11287@gmail.com',
       subject: `📩 New Message from ${sanitizedName}`,
       html: `

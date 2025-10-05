@@ -1,8 +1,15 @@
 {
   "rewrites": [
     {
-      "source": "/api/sendEmail",
-      "destination": "/api/sendEmail"
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/[^.]+",
+      "dest": "/",
+      "status": 200
     }
   ]
 }

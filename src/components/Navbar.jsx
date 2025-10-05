@@ -43,7 +43,7 @@ const Navbar = ({ location, getLocation, openDropdown, setOpenDropdown }) => {
           {openDropdown ? (
             <div className="w-[250px] h-max shadow-2xl z-50 bg-white fixed top-16 left-4 lg:left-60 border-2 p-5 border-gray-100 rounded-md">
               <h1 className="font-semibold mb-4 text-xl flex justify-between">
-                Change Location{" "}
+                Location{" "}
                 <span onClick={toggleDropdown} className="cursor-pointer">
                   <CgClose />
                 </span>
@@ -52,7 +52,7 @@ const Navbar = ({ location, getLocation, openDropdown, setOpenDropdown }) => {
                 onClick={getLocation}
                 className="bg-red-500 text-white px-3 py-1 rounded-md cursor-pointer hover:bg-red-400"
               >
-                Detect my location
+                Location
               </button>
             </div>
           ) : null}
