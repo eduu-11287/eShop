@@ -1,11 +1,30 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "react-toastify";
+
 export const CartContext = createContext(null);
 
 export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
-  const [cartItem, setCartItem] = useState([]);
+  // Initialize cart from localStorage
+  const [cartItem, setCartItem] = useState(() => {
+    try {
+      const savedCart = localStorage.getItem('cartItems');
+      return savedCart ? JSON.parse(savedCart) : [];
+    } catch (error) {
+      console.error("Error loading cart from localStorage:", error);
+      return [];
+    }
+  });
+
+  // Save cart to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem('cartItems', JSON.stringify(cartItem));
+    } catch (error) {
+      console.error("Error saving cart to localStorage:", error);
+    }
+  }, [cartItem]);
 
   const addToCart = (product) => {
     const itemInCart = cartItem.find((item) => item.id === product.id);
@@ -47,8 +66,7 @@ export const CartProvider = ({ children }) => {
   const deleteItem = (productId) => {
     setCartItem(cartItem.filter((item) => item.id !== productId));
     toast.success("Item removed from cart");
-  }
-
+  };
 
   return (
     <CartContext.Provider

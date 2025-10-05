@@ -16,11 +16,10 @@ const App = () => {
   const [location, setLocation] = useState()
   const [openDropdown, setOpenDropdown] = useState(false)
 
-  // geting location
+  // getting location
   const getLocation = async ()=> {
     navigator.geolocation.getCurrentPosition(async pos => {
       const {latitude, longitude} = pos.coords
-      //console.log(latitude, longitude);
 
       const url = `/api/reverse?lat=${latitude}&lon=${longitude}&format=json`
       try {
@@ -33,9 +32,11 @@ const App = () => {
       }
     })
   }
+
   useEffect(()=> {
     getLocation()
   },[])
+
   return (
     <BrowserRouter>
       <Navbar location={location} getLocation={getLocation} openDropdown={openDropdown} setOpenDropdown={setOpenDropdown}/>
