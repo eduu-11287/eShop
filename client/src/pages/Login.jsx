@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { isMobile } from "react-device-detect";
 
 const Login = () => {
-  const { user, signInWithGooglePopup, signInWithGoogleRedirect } = useAuth();
+  const { user, signInWithGooglePopup } = useAuth();
   const navigate = useNavigate();
 
+  // Redirect logged-in users straight to checkout
   useEffect(() => {
     if (user) {
       navigate("/checkout");
@@ -15,16 +15,10 @@ const Login = () => {
 
   const handleGoogleLogin = async () => {
     try {
-      if (isMobile) {
-        // Redirect flow is safer for mobile browsers
-        await signInWithGoogleRedirect();
-      } else {
-        // Popup flow works best for desktop
-        await signInWithGooglePopup();
-        navigate("/checkout");
-      }
+      await signInWithGooglePopup();
+      navigate("/checkout");
     } catch (error) {
-      console.error("Google sign-in failed:", error);
+      console.error("❌ Google sign-in failed:", error);
       alert("Login failed. Try again.");
     }
   };

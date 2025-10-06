@@ -3,13 +3,11 @@ import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 
 const AuthModal = ({ isOpen, onClose }) => {
-  const { signInWithGoogle } = useAuth();
+  const { signInWithGooglePopup } = useAuth();
 
-  // Close modal when pressing ESC
+  // Close modal on ESC
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === "Escape") onClose();
-    };
+    const handleKeyDown = (e) => e.key === "Escape" && onClose();
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [onClose]);
@@ -18,11 +16,11 @@ const AuthModal = ({ isOpen, onClose }) => {
 
   const handleGoogleLogin = async () => {
     try {
-      await signInWithGoogle();
+      await signInWithGooglePopup();
       toast.success("Signed in successfully!");
-      onClose(); // close modal after successful sign-in
+      onClose();
     } catch (error) {
-      console.error("Google sign-in failed:", error);
+      console.error("❌ Google sign-in failed:", error);
       toast.error("Sign-in failed. Please try again.");
     }
   };
@@ -56,16 +54,10 @@ const AuthModal = ({ isOpen, onClose }) => {
         </button>
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
         }
         .animate-fadeIn {
           animation: fadeIn 0.25s ease-out;
