@@ -52,74 +52,40 @@ export const AuthProvider = ({ children }) => {
     );
   };
 
-  const signInWithGoogle = async () => {
+  const signInWithGooglePopup = async () => {
     try {
-      // Set persistence before sign-in
       await setPersistence(auth, browserLocalPersistence);
-
-      const mobile = isMobile();
-      
-      if (mobile) {
-        // Mobile: Use redirect (native browser flow)
-        console.log("📱 Mobile detected - using signInWithRedirect");
-        
-        // Store flag to show loading state after redirect
-        sessionStorage.setItem('authRedirectPending', 'true');
-        
-        toast.loading("Redirecting to Google...", { id: "google-signin" });
-        await signInWithRedirect(auth, googleProvider);
-        // User will be redirected away - code below won't execute
-      } else {
-        // Desktop: Use popup (modal-like experience)
-        console.log("🖥️ Desktop detected - using signInWithPopup");
-        
-        const loadingToast = toast.loading("Opening Google sign-in...", { id: "google-signin" });
-        
-        try {
-          const result = await signInWithPopup(auth, googleProvider);
-          const firebaseUser = result.user;
-          
-          toast.dismiss(loadingToast);
-          setUser(mapUser(firebaseUser));
-          
-          if (!toastShown.current) {
-            toast.success(`Welcome, ${firebaseUser.displayName || "User"}!`, { id: "welcome-toast" });
-            toastShown.current = true;
-          }
-        } catch (popupError) {
-          toast.dismiss(loadingToast);
-          
-          // Handle popup blocked or closed by user
-          if (popupError.code === 'auth/popup-blocked') {
-            toast.error("Popup blocked! Please allow popups for this site.", { duration: 5000 });
-          } else if (popupError.code === 'auth/popup-closed-by-user') {
-            toast("Sign-in cancelled", { icon: "ℹ️" });
-          } else {
-            throw popupError; // Re-throw other errors
-          }
-        }
+      console.log("🖥️ Desktop detected - using signInWithPopup");
+      const loadingToast = toast.loading("Opening Google sign-in...", { id: "google-signin" });
+      const result = await signInWithPopup(auth, googleProvider);
+      toast.dismiss(loadingToast);
+      const firebaseUser = result.user;
+      setUser(mapUser(firebaseUser));
+      if (!toastShown.current) {
+        toast.success(`Welcome, ${firebaseUser.displayName || "User"}!`, { id: "welcome-toast" });
+        toastShown.current = true;
       }
     } catch (error) {
-      console.error("❌ Google Sign-In Error:", error);
-      console.error("Error code:", error.code);
-      console.error("Error message:", error.message);
-      
       toast.dismiss("google-signin");
-      
-      // User-friendly error messages
-      const errorMessages = {
-        'auth/network-request-failed': 'Network error. Check your connection.',
-        'auth/too-many-requests': 'Too many attempts. Try again later.',
-        'auth/unauthorized-domain': 'This domain is not authorized. Contact support.',
-        'auth/operation-not-allowed': 'Google sign-in is not enabled.',
-      };
-      
-      toast.error(errorMessages[error.code] || "Sign-in failed. Please try again.", {
-        duration: 4000,
-      });
+      console.error("❌ Popup Sign-In Error:", error);
+      toast.error("Sign-in failed. Try again.");
     }
   };
-
+  
+  const signInWithGoogleRedirect = async () => {
+    try {
+      await setPersistence(auth, browserLocalPersistence);
+      console.log("📱 Mobile detected - using signInWithRedirect");
+      sessionStorage.setItem("authRedirectPending", "true");
+      toast.loading("Redirecting to Google...", { id: "google-signin" });
+      await signInWithRedirect(auth, googleProvider);
+    } catch (error) {
+      console.error("❌ Redirect Sign-In Error:", error);
+      toast.dismiss("google-signin");
+      toast.error("Redirect failed. Try again.");
+    }
+  };
+  
   const logout = async () => {
     try {
       await signOut(auth);
@@ -218,7 +184,7 @@ export const AuthProvider = ({ children }) => {
   }, [authInitialized]);
 
   return (
-    <AuthContext.Provider value={{ user, loading, signInWithGoogle, logout }}>
+    <AuthContext.Provider value={{ user, loading, signInWithGooglePopup, signInWithGoogleRedirect, logout }}>
       {children}
     </AuthContext.Provider>
   );
