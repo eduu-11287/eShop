@@ -1,9 +1,23 @@
-import React from "react";
-import { NavLink, Link } from "react-router-dom";
+import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
 import { CgClose } from "react-icons/cg";
 import { FiMapPin } from "react-icons/fi";
+import { useAuth } from "../context/AuthContext";
+import AuthModal from "./AuthModal";
 
 const ResponsiveMenu = ({ openNav, setOpenNav, location, getLocation }) => {
+  const { user, logout } = useAuth();
+  const [openAuthModal, setOpenAuthModal] = useState(false);
+
+  const handleSignOut = async () => {
+    try {
+      await logout();
+      setOpenNav(false);
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+
   return (
     <>
       {/* Overlay */}
@@ -30,6 +44,27 @@ const ResponsiveMenu = ({ openNav, setOpenNav, location, getLocation }) => {
               className="h-6 w-6 sm:h-7 sm:w-7 cursor-pointer hover:text-red-500 transition-colors"
             />
           </div>
+
+          {/* User Info Section - Show if logged in */}
+          {user && (
+            <div className="mb-6 pb-6 border-b border-gray-200">
+              <div className="flex items-center gap-3">
+                <img
+                  src={user.photoURL || "https://via.placeholder.com/40"}
+                  alt={user.displayName || "User"}
+                  className="w-12 h-12 rounded-full border-2 border-red-500 object-cover"
+                />
+                <div className="flex-1">
+                  <p className="font-semibold text-gray-800 text-base">
+                    {user.displayName || "User"}
+                  </p>
+                  <p className="text-xs text-gray-500 truncate">
+                    {user.email}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Location Section */}
           <div className="mb-6 pb-6 border-b border-gray-200">
@@ -116,15 +151,36 @@ const ResponsiveMenu = ({ openNav, setOpenNav, location, getLocation }) => {
           {/* Auth Buttons Section */}
           <div className="mt-auto pt-6 border-t border-gray-200">
             <div className="flex flex-col gap-3">
-              <Link to={"/signin"} onClick={() => setOpenNav(false)}>
-                <button className="bg-red-500 text-white px-4 py-2 rounded-md cursor-pointer w-full text-center hover:bg-red-600 transition-colors font-semibold">
+              {user ? (
+                // User is logged in - show Sign Out button
+                <button
+                  onClick={handleSignOut}
+                  className="bg-white border-2 border-red-500 text-red-500 px-4 py-2 rounded-md cursor-pointer w-full text-center hover:bg-red-50 transition-colors font-semibold"
+                >
+                  Sign Out
+                </button>
+              ) : (
+                // User is not logged in - show Sign In button
+                <button
+                  onClick={() => {
+                    setOpenAuthModal(true);
+                    setOpenNav(false);
+                  }}
+                  className="bg-red-500 text-white px-4 py-2 rounded-md cursor-pointer w-full text-center hover:bg-red-600 transition-colors font-semibold"
+                >
                   Sign In
                 </button>
-              </Link>
+              )}
             </div>
           </div>
         </div>
       </div>
+
+      {/* Auth Modal */}
+      <AuthModal 
+        isOpen={openAuthModal} 
+        onClose={() => setOpenAuthModal(false)} 
+      />
     </>
   );
 };

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { LucideNotebookText } from "lucide-react";
 import { MdDeliveryDining } from "react-icons/md";
@@ -10,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 const Cart = ({ location, getLocation }) => {
   const { cartItem, updateQuantity, deleteItem } = useCart();
   const navigate = useNavigate();
+  const { user } = useAuth(); // get user from Auth context
 
   // State for form inputs
   const [formData, setFormData] = useState({
@@ -19,19 +21,29 @@ const Cart = ({ location, getLocation }) => {
     postcode: location?.postcode || "",
     country: location?.country || "",
     phone: "",
-    promoCode: ""
+    promoCode: "",
   });
 
   // Handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const totalPrice = cartItem.reduce(
     (total, items) => total + items.price * items.quantity,
     0
   );
+
+  // handle checkout
+  const handleCheckout = () => {
+    if (!user) {
+      alert("Please log in to proceed to checkout.");
+      navigate("/login");
+    } else {
+      navigate("/checkout");
+    }
+  };
 
   if (!cartItem) {
     return <div className="mt-10 max-w-6xl mx-auto mb-5 px-4">Loading...</div>;
@@ -41,7 +53,9 @@ const Cart = ({ location, getLocation }) => {
     <div className="mt-6 sm:mt-10 max-w-6xl mx-auto mb-5 px-4 sm:px-6 lg:px-8">
       {cartItem.length > 0 ? (
         <div>
-          <h1 className="font-bold text-xl sm:text-2xl">My Cart ({cartItem.length})</h1>
+          <h1 className="font-bold text-xl sm:text-2xl">
+            My Cart ({cartItem.length})
+          </h1>
           <div className="mt-6 sm:mt-10 space-y-3">
             {cartItem.map((item) => {
               return (
@@ -56,7 +70,9 @@ const Cart = ({ location, getLocation }) => {
                       className="w-16 h-16 sm:w-20 sm:h-20 rounded-md flex-shrink-0"
                     />
                     <div className="flex-1 min-w-0">
-                      <h1 className="line-clamp-2 text-sm sm:text-base">{item.title}</h1>
+                      <h1 className="line-clamp-2 text-sm sm:text-base">
+                        {item.title}
+                      </h1>
                       <p className="text-red-500 font-semibold text-base sm:text-lg">
                         Ksh{item.price}
                       </p>
@@ -96,9 +112,13 @@ const Cart = ({ location, getLocation }) => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-10 lg:gap-20 mt-6">
             {/* Delivery Info Form */}
             <div className="bg-gray-100 rounded-md p-5 sm:p-7 space-y-3 sm:space-y-4">
-              <h1 className="text-gray-800 font-bold text-lg sm:text-xl">Delivery Info</h1>
+              <h1 className="text-gray-800 font-bold text-lg sm:text-xl">
+                Delivery Info
+              </h1>
               <div className="flex flex-col space-y-1">
-                <label htmlFor="fullName" className="text-sm sm:text-base">Full Name</label>
+                <label htmlFor="fullName" className="text-sm sm:text-base">
+                  Full Name
+                </label>
                 <input
                   type="text"
                   id="fullName"
@@ -111,7 +131,9 @@ const Cart = ({ location, getLocation }) => {
                 />
               </div>
               <div className="flex flex-col space-y-1">
-                <label htmlFor="address" className="text-sm sm:text-base">Address</label>
+                <label htmlFor="address" className="text-sm sm:text-base">
+                  Address
+                </label>
                 <input
                   type="text"
                   id="address"
@@ -125,7 +147,9 @@ const Cart = ({ location, getLocation }) => {
               </div>
               <div className="flex flex-col sm:flex-row w-full gap-3 sm:gap-5">
                 <div className="flex flex-col space-y-1 w-full">
-                  <label htmlFor="state" className="text-sm sm:text-base">State</label>
+                  <label htmlFor="state" className="text-sm sm:text-base">
+                    State
+                  </label>
                   <input
                     type="text"
                     id="state"
@@ -138,7 +162,9 @@ const Cart = ({ location, getLocation }) => {
                   />
                 </div>
                 <div className="flex flex-col space-y-1 w-full">
-                  <label htmlFor="postcode" className="text-sm sm:text-base">PostCode</label>
+                  <label htmlFor="postcode" className="text-sm sm:text-base">
+                    PostCode
+                  </label>
                   <input
                     type="text"
                     id="postcode"
@@ -153,7 +179,9 @@ const Cart = ({ location, getLocation }) => {
               </div>
               <div className="flex flex-col sm:flex-row w-full gap-3 sm:gap-5">
                 <div className="flex flex-col space-y-1 w-full">
-                  <label htmlFor="country" className="text-sm sm:text-base">Country</label>
+                  <label htmlFor="country" className="text-sm sm:text-base">
+                    Country
+                  </label>
                   <input
                     type="text"
                     id="country"
@@ -166,7 +194,9 @@ const Cart = ({ location, getLocation }) => {
                   />
                 </div>
                 <div className="flex flex-col space-y-1 w-full">
-                  <label htmlFor="phone" className="text-sm sm:text-base">Phone No.</label>
+                  <label htmlFor="phone" className="text-sm sm:text-base">
+                    Phone No.
+                  </label>
                   <input
                     type="text"
                     id="phone"
@@ -197,7 +227,9 @@ const Cart = ({ location, getLocation }) => {
 
             {/* Bill Details */}
             <div className="bg-white border border-gray-100 shadow-xl rounded-md p-5 sm:p-7 space-y-3 sm:space-y-4 h-max">
-              <h1 className="text-gray-500 font-bold text-lg sm:text-xl">Bill details</h1>
+              <h1 className="text-gray-500 font-bold text-lg sm:text-xl">
+                Bill details
+              </h1>
               <div className="flex justify-between items-center text-sm sm:text-base">
                 <h1 className="flex gap-1 items-center text-gray-700">
                   <span>
@@ -230,8 +262,12 @@ const Cart = ({ location, getLocation }) => {
               </div>
               <hr className="text-gray-200 mt-2" />
               <div className="flex justify-between items-center text-sm sm:text-base">
-                <h1 className="font-semibold text-base sm:text-lg">Grand total</h1>
-                <p className="font-semibold text-base sm:text-lg">Ksh {totalPrice + 50}</p>
+                <h1 className="font-semibold text-base sm:text-lg">
+                  Grand total
+                </h1>
+                <p className="font-semibold text-base sm:text-lg">
+                  Ksh {totalPrice + 50}
+                </p>
               </div>
               <div>
                 <h1 className="font-semibold text-gray-700 mb-3 mt-5 sm:mt-7 text-sm sm:text-base">
@@ -251,7 +287,10 @@ const Cart = ({ location, getLocation }) => {
                   </button>
                 </div>
               </div>
-              <button className="bg-red-500 text-white px-3 py-2 sm:py-3 rounded-md w-full cursor-pointer mt-3 hover:bg-red-600 transition-colors text-sm sm:text-base font-semibold">
+              <button
+                onClick={handleCheckout}
+                className="bg-red-500 text-white px-3 py-2 sm:py-3 rounded-md w-full cursor-pointer mt-3 hover:bg-red-600 transition-colors text-sm sm:text-base font-semibold"
+              >
                 Proceed to Checkout
               </button>
             </div>
@@ -262,7 +301,11 @@ const Cart = ({ location, getLocation }) => {
           <h1 className="text-red-500/80 font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-center">
             Oh no! Your cart is empty!
           </h1>
-          <img src={emptyCart} alt="Empty cart" className="w-[250px] sm:w-[350px] md:w-[400px]" />
+          <img
+            src={emptyCart}
+            alt="Empty cart"
+            className="w-[250px] sm:w-[350px] md:w-[400px]"
+          />
           <button
             onClick={() => navigate("/products")}
             className="bg-red-500 text-white px-4 sm:px-5 py-2 sm:py-3 rounded-md cursor-pointer hover:bg-red-600 transition-colors text-sm sm:text-base"
