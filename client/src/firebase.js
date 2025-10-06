@@ -1,22 +1,21 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
-
-// firebase configuration
+// Firebase configuration using environment variables
 const firebaseConfig = {
-    apiKey: "AIzaSyA3xbIDLNFKYOSaLUTMBx3Mem147Xw252w",
-    authDomain: "eshop-399c7.firebaseapp.com",
-    projectId: "eshop-399c7",
-    storageBucket: "eshop-399c7.firebasestorage.app",
-    messagingSenderId: "971753712771",
-    appId: "1:971753712771:web:249bcbfaacb12c81f1bfb6"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
-// initialize firebase
-const app =initializeApp(firebaseConfig);
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
-// initialize firebase authentication
+// Initialize Firebase Authentication
 export const auth = getAuth(app);
 
-// google authentication provider
+// Google authentication provider
 export const googleProvider = new GoogleAuthProvider();
