@@ -48,7 +48,7 @@ const Contact = () => {
 
     try {
       // Use relative path for both dev and production
-      const response = await fetch("/api/sendEmail", {
+      const response = await fetch("/api/sendEmail.js", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)

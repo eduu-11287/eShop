@@ -9,7 +9,7 @@ const MidBanner = () => {
   return (
     <div className="bg-gray-100 py-8 sm:py-12 md:py-16 lg:py-24">
       <div
-        className="relative max-w-7xl mx-4 sm:mx-6 md:mx-auto rounded-lg md:rounded-2xl bg-cover bg-center h-[400px] sm:h-[450px] md:h-[550px] lg:h-[600px]"
+        className="relative max-w-7xl mx-4 sm:mx-6 md:mx-auto rounded-lg md:rounded-2xl bg-cover bg-fixed h-[400px] sm:h-[450px] md:h-[550px] lg:h-[600px]" // Added bg-fixed here
         style={{
           backgroundImage: `url(${banner})`,
           backgroundPosition: "center",

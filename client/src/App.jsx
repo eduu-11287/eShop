@@ -10,6 +10,7 @@ import Navbar from "./components/Navbar";
 import axios from "axios";
 import Login from "./pages/Login";
 import Checkout from "./pages/Checkout";
+import OrderConfirmation from "./pages/OrderConfirmation";
 import Footer from "./components/Footer";
 import CategoryProduct from "./pages/CategoryProduct";
 import { AuthProvider } from "./context/AuthContext";
@@ -64,6 +65,7 @@ const App = () => {
           ></Route>
           <Route path="/login" element={<Login />}></Route>
           <Route path="/checkout" element={<Checkout />}></Route>
+          <Route path="/order-confirmation" element={<OrderConfirmation />} />
         </Routes>
         <Footer />
       </BrowserRouter>
