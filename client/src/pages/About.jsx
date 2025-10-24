@@ -1,4 +1,3 @@
-// src/pages/About.jsx
 import React, { useCallback } from "react";
 import { Link } from "react-router-dom";
 import { getData } from "../context/DataContext";

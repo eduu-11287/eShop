@@ -12,11 +12,12 @@ import toast from "react-hot-toast";
 
 const AuthContext = createContext();
 
+// Move provider outside component to avoid recreating it
+const googleProvider = new GoogleAuthProvider();
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  const googleProvider = new GoogleAuthProvider();
 
   // --- Helper: map user data
   const mapUser = (firebaseUser) =>
@@ -37,11 +38,19 @@ export const AuthProvider = ({ children }) => {
       await setPersistence(auth, browserLocalPersistence);
       const result = await signInWithPopup(auth, googleProvider);
       const firebaseUser = result.user;
-      setUser(mapUser(firebaseUser));
+      // Don't manually setUser here - let onAuthStateChanged handle it
       toast.success(`Welcome, ${firebaseUser.displayName || "User"} 👋`);
     } catch (error) {
       console.error("❌ Google sign-in error:", error);
-      toast.error("Sign-in failed. Please try again.");
+      
+      // Better error messages based on error code
+      if (error.code === 'auth/popup-closed-by-user') {
+        toast.error("Sign-in cancelled");
+      } else if (error.code === 'auth/popup-blocked') {
+        toast.error("Popup blocked. Please allow popups for this site.");
+      } else {
+        toast.error("Sign-in failed. Please try again.");
+      }
     }
   };
 
@@ -49,7 +58,7 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       await signOut(auth);
-      setUser(null);
+      // Don't manually setUser(null) - let onAuthStateChanged handle it
       toast("Signed out 👋");
     } catch (error) {
       console.error("❌ Logout error:", error);
@@ -59,10 +68,17 @@ export const AuthProvider = ({ children }) => {
 
   // --- Listen for auth changes
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(mapUser(currentUser));
-      setLoading(false);
-    });
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      (currentUser) => {
+        setUser(mapUser(currentUser));
+        setLoading(false);
+      },
+      (error) => {
+        console.error("❌ Auth state change error:", error);
+        setLoading(false);
+      }
+    );
     return unsubscribe;
   }, []);
 
